@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        img {
+            position: absolute;
+        }
+
+        div {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+        }
+
+        #rightSide {
+            left: 500px;
+            border-left: 1px solid;
+        }
+    </style>
+</head>
+
+<body onload="generateFaces()">
+    <h1>Matching Game</h1>
+    <p>Click on the extra smiling face on the left</p>
+
+    <div id="leftSide"></div>
+    <div id="rightSide"></div>
+
+    <script>
+        let numberOfFaces = 5;
+        let count = 0; //add counter for attempts
+        const theLeftSide = document.querySelector("#leftSide");
+        const theRightSide = document.querySelector("#rightSide");
+
+        /**
+         * Function to Creates and displays a specified number of face images randomly on the left
+         */
+        function generateFaces() {
+            for (let i = 0; i < numberOfFaces; i++) {
+                let face = document.createElement("img");
+                face.src = 'images/smile.png';
+                let randomTop = Math.floor(Math.random() * 400) + 1;
+                let randomLeft = Math.floor(Math.random() * 400) + 1;
+                face.style.top = randomTop + 'px';
+                face.style.left = randomLeft + 'px';
+                theLeftSide.appendChild(face);
+            }
+
+            //It also clones these images to the right side
+            const leftSideImages = theLeftSide.cloneNode(true);
+            leftSideImages.removeChild(leftSideImages.lastChild);
+            theRightSide.appendChild(leftSideImages);
+
+            //sets up event listeners for progressing to the next level or ending the game
+            theLeftSide.lastChild.addEventListener('click', nextLevel);
+            document.body.addEventListener('click', gameOver);
+        }
+
+        /**
+         * Triggered when the player clicks the extra smiling face
+         */
+        function nextLevel(event) {
+            event.stopPropagation();
+            count++; //count +1 on successful click
+            numberOfFaces += 5;
+            //Making sure we don't add new faces on top of old ones
+            // while(theLeftSide.firstChild){
+            //     theLeftSide.removeChild(theLeftSide.firstChild)
+            // }
+            // while(theRightSide.firstChild){
+            //     theRightSide.removeChild(theRightSide.firstChild)
+            // }
+            theLeftSide.innerHTML = "";
+            theRightSide.innerHTML = "";
+            generateFaces();
+
+        }
+
+
+        /**
+         * Triggered when the player clicks on anything except the correct face
+         */
+        function gameOver(){
+            alert('Game Over! Attempts: ' + count); //show count
+            document.body.removeEventListener('click', gameOver);
+            theLeftSide.lastChild.removeEventListener('click', nextLevel);
+        }
+    </script>
+</body>
+
+</html>
